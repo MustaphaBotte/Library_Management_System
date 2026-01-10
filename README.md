@@ -40,7 +40,7 @@ This project represents my **system design and implementation journey**. I am st
 * Business rules
 * ADO.NET data access logic
 
-This repository will grow **topic by topic**, not all at once, reflecting real-world software development practices.
+This repository will grow **feature by feature**, not all at once, reflecting real-world software development practices.
 
 ---
 
@@ -90,6 +90,7 @@ This project is built in **clear phases**, similar to real system design workflo
 ### Non-Functional Requirements
 
 * Desktop-based application
+* Separation of layers and concerns
 * Easy-to-use UI
 * Fast database operations
 * Data consistency and integrity
@@ -100,9 +101,9 @@ This project is built in **clear phases**, similar to real system design workflo
 
 I will design the system using a layered architecture:
 
-* **Presentation Layer** (Windows Forms / WPF)
+* **Presentation Layer** (Windows Forms)
 * **Business Logic Layer**
-* **Data Access Layer** (ADO.NET or Entity Framework)
+* **Data Access Layer** (ADO.NET)
 * **SQL Server Database**
 
 Each layer will have a clear responsibility.
@@ -138,7 +139,7 @@ This schema will remain **stable** during development. My focus is on:
 
 ## 🖥️ Phase 4 — UI Planning
 
-Before coding, I will design UI screens such as:
+I will design UI screens such as:
 
 * Login Screen
 * Dashboard
@@ -155,7 +156,7 @@ Each screen will be implemented step by step.
 
 I will use **ADO.NET** as the data access technology.
 
-* Implement CRUD operations manually using SQL commands
+* Implement CRUD operations using SQL commands
 * Use **parameterized queries** to prevent SQL injection
 * Explicitly manage connections, commands, readers, and transactions
 
