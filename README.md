@@ -1,4 +1,4 @@
-# 📚 Library Management System (LMS)
+# 📚 Library Management System (LMS) (Under development)
 
 ## 👋 About This Project
 
