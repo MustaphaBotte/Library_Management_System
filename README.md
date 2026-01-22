@@ -249,7 +249,7 @@ After completing this project, I expect to:
 
 This section will be updated as I move forward:
 
-* [ ] Requirements Analysis
+* [Done] Requirements Analysis
 * [ ] Database Design
 * [ ] UI Design
 * [ ] Data Access Layer
