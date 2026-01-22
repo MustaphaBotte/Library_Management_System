@@ -1,2 +1,0 @@
-CREATE DATABASE LMS;
-use LMS;
