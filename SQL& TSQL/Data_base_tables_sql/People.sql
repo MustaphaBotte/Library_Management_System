@@ -14,6 +14,7 @@ CountryID int not null,
 ProfilePicturePath nvarchar(500) null,
 IsDeleted bit null default 0,
 foreign key(CountryID) references Countries(CountryID),
+foreign key(CreatedBy ) references Employees(EmployeeID)
 )
  
 create unique index IX_UniqueNonNullPersonEmail 

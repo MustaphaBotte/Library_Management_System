@@ -1,10 +1,9 @@
-CREATE PROCEDURE SP_InsertPerson
+ALTER  PROCEDURE SP_InsertPerson
     @FirstName nvarchar(50),
     @SecondName nvarchar(50),
     @Email nvarchar(255),
     @PhoneNumber nvarchar(15),
     @DateOfBirth date,
-	@CreatedAt date,
     @Gender char(1),
     @CountryID int,
     @ProfilePicturePath nvarchar(500) = NULL,
@@ -14,9 +13,9 @@ CREATE PROCEDURE SP_InsertPerson
 AS
 BEGIN
 begin try
-   insert into People(FirstName,SecondName,Email,PhoneNumber,DateOfBirth,Gender,CreatedAt ,CreatedBy,CountryID,ProfilePicturePath,IsDeleted)
+   insert into People(FirstName,SecondName,Email,PhoneNumber,DateOfBirth,Gender,CreatedBy,CountryID,ProfilePicturePath,IsDeleted)
 
-   values(@FirstName, @SecondName, @Email,@PhoneNumber,@DateOfBirth, @Gender,@CreatedAt,@CreatedBy,@CountryID,@ProfilePicturePath,@IsDeleted);
+   values(@FirstName, @SecondName, @Email,@PhoneNumber,@DateOfBirth, @Gender,@CreatedBy,@CountryID,@ProfilePicturePath,@IsDeleted);
 
    set @InsertedID = SCOPE_IDENTITY();
    return 0 ; --success
@@ -34,3 +33,4 @@ declare @id int;
 exec SP_InsertPerson '','',',',',','2023-10-10','2023-10-10','m',1,'',null,0,@id output;
 select  @id;
 
+select * from People
