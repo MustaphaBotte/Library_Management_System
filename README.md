@@ -249,8 +249,8 @@ After completing this project, I expect to:
 
 This section will be updated as I move forward:
 
-* [ ] Requirements Analysis
-* [ ] Database Design
+* [Done] Requirements Analysis
+* [Done] Database Design
 * [ ] UI Design
 * [ ] Data Access Layer
 * [ ] Business Logic
