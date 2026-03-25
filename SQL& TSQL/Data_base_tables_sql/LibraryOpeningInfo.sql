@@ -10,3 +10,14 @@ foreign key (LibraryID) references Library(LibraryID),
 primary key (LibraryID,WeekDay)
 )
 
+
+
+INSERT INTO LibraryOpeningInfo (LibraryID, WeekDay, IsOpen, OpeningHour, ClosinggHour)
+VALUES
+    (2, 1, 1, '08:00:00', '20:00:00'),  -- Monday
+    (2, 2, 1, '08:00:00', '20:00:00'),  -- Tuesday
+    (2, 3, 1, '08:00:00', '20:00:00'),  -- Wednesday
+    (2, 4, 1, '08:00:00', '20:00:00'),  -- Thursday
+    (2, 5, 1, '08:00:00', '17:00:00'),  -- Friday (shorter)
+    (2, 6, 1, '09:00:00', '14:00:00'),  -- Saturday (shorter)
+    (2, 7, 0, NULL,        NULL);         -- Sunday (closed)

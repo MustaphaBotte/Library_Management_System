@@ -13,6 +13,7 @@ CREATE TABLE Members
     LastBorrowAt Datetime null,
 	LibraryID int not null,
 	Notes nvarchar(500) null, 
+	IsDeleted bit not null default(0),
 	foreign key (PersonID) references People(PersonID),
     foreign key (LibraryID) references Library(LibraryID)
 )

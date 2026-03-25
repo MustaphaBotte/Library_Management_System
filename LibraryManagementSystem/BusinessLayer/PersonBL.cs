@@ -1,14 +1,6 @@
-﻿using LMS.DTOs;
-using System.Net.Mail;
-using System.Text.RegularExpressions;
-using LMS.DataAccess;
-using System.Data;
-using static LMS.DataAccess.Exceptions;
-using System.Numerics;
-
-namespace LMS.BusinessLayer
+﻿namespace LMS.BusinessLayer
 {
-    public class Person
+    public class PersonService
     {
         public class PersonException:Exception
         {
@@ -20,7 +12,7 @@ namespace LMS.BusinessLayer
 
         }
         private enum EnMode {Add=1 , Update = 2 }
-        EnMode _Mode = EnMode.Add;
+        EnMode _Mode = EnMode.Add ;
 
         public uint PersonId { get; private set; } = 0;
 
@@ -58,11 +50,11 @@ namespace LMS.BusinessLayer
             get => _email;
             set
             {
-                if (MailAddress.TryCreate(value, out _))
+                if (!string.IsNullOrEmpty(value) && MailAddress.TryCreate(value, out _))
                 {
                     _email = value;
-                }else
-                    throw new ArgumentException("Invalid email format.");
+                }
+                else throw new ArgumentException("Invalid email format.");
 
             }
         }
@@ -73,12 +65,12 @@ namespace LMS.BusinessLayer
             get => _phoneNumber;
             set
             {
-                if (!string.IsNullOrWhiteSpace(value))
+                if (!string.IsNullOrWhiteSpace(value) && !Regex.IsMatch(value, @"^\+?[0-9\s\-]{7,15}$"))
                 {
-                    if (!Regex.IsMatch(value, @"^\+?[0-9\s\-]{7,15}$"))
-                        throw new ArgumentException("Invalid Phone Number format.");
+                    _phoneNumber = value;
                 }
-                _phoneNumber = value;
+                else throw new ArgumentException("Invalid Phone Number format.");
+                  
             }
         }
 
@@ -99,15 +91,15 @@ namespace LMS.BusinessLayer
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
         public int? CreatedBy { get; set; } = null;
-        public int CountryID { get; set; } = -1;
         public string? ProfilePicturePath { get; set; } = "";
 
-        public Person() 
+        public (uint CountryId, string CountryName) Country; 
+        public PersonService() 
         {
             this._Mode = EnMode.Add;
         }
 
-        public Person(PersonDto dto)
+        public PersonService(PersonEntity dto)
         {
             PersonId = dto.PersonId;
             FirstName = dto.FirstName;
@@ -119,16 +111,24 @@ namespace LMS.BusinessLayer
             CreatedAt = dto.CreatedAt;
             UpdatedAt = dto.UpdatedAt;
             CreatedBy = dto.CreatedBy;
-            CountryID = dto.CountryID;
             ProfilePicturePath = dto.ProfilePicturePath;
             this._Mode = EnMode.Update;
         }
-        public static async Task<Person?> GetPersonAsync(uint PersonID)
+        public static async Task<PersonService?> GetPersonAsync(uint PersonID)
         {
-           var personDto =await PersonRepository.GetPersonAsync(PersonID);
-            if(personDto!=null)
+           var PersonEntity =await PersonRepository.GetPersonAsync(PersonID);
+            if(PersonEntity!=null)
             {
-                return new Person(personDto);
+                
+                var Person = new PersonService(PersonEntity);
+                var Country =await CountryRepository.GetCountryById(PersonEntity.CountryID);
+                if(Country!=null)
+                {
+                    
+                    Person.Country.CountryId = Country.CountryId;
+                    Person.Country.CountryName = Country.CountryName;
+                }
+                return Person;
             }
             return null;
         }
@@ -148,25 +148,20 @@ namespace LMS.BusinessLayer
         }
         public static async Task<DataTable?> GetPeopleAsync(int LastId, int Rows = 10)
         {
-            var People = await PersonRepository.GetPeopleAsync(LastId,Rows);
-            if (People != null)
-            {
-                return People;
-            }
-            return null;
+            return await PersonRepository.GetPeopleAsync(LastId,Rows);        
         }
         public async Task<bool> Save()
         {
             
-            var PersonDto = new PersonDto(PersonId, FirstName, LastName, Email, PhoneNumber, DateOfBirth, Gender, CreatedAt, UpdatedAt,
-                    CreatedBy, CountryID, ProfilePicturePath, false);
+            var PersonEntity = new PersonEntity(PersonId, FirstName, LastName, Email, PhoneNumber, DateOfBirth, Gender, CreatedAt, UpdatedAt,
+                    CreatedBy,Country.CountryId, ProfilePicturePath, false);
 
             try
             {
                 switch (this._Mode)
                 {
                     case EnMode.Add:
-                    int InsertedId = await PersonRepository.AddNewPersonAsync(PersonDto);
+                    int InsertedId = await PersonRepository.AddNewPersonAsync(PersonEntity);
                     if (InsertedId > 0)
                     {
                         this.PersonId = (uint)InsertedId;
@@ -175,32 +170,32 @@ namespace LMS.BusinessLayer
                         break;
 
                     case EnMode.Update:                 
-                    bool IsSuccess = await PersonRepository.UpdatePersonAsync(PersonDto);
+                    bool IsSuccess = await PersonRepository.UpdatePersonAsync(PersonEntity);
                     return IsSuccess;
                   
                 }
             }
-            catch (Exceptions.CannotInsertNullException)
+            catch (CannotInsertNullException)
             {
                 throw new PersonException("Some required fields are missing. Please fill all mandatory fields");
             }
-            catch (Exceptions.OperationTimeoutException)
+            catch (OperationTimeoutException)
             {
                 throw new PersonException("The operation timed out. Please try again in a few moments.");
             }
-            catch (Exceptions.ForeignKeyViolationException)
+            catch (ForeignKeyViolationException)
             {
                 throw new PersonException("Cannot complete this operation because related data does not exist.");
             }
-            catch (Exceptions.StringTruncationException)
+            catch (StringTruncationException)
             {
                 throw new PersonException("One of the input values is too long. Please shorten it and try again.");
             }
-            catch (Exceptions.UniqueConstraintViolation)
+            catch (UniqueConstraintViolation)
             {
                 throw new PersonException("A record with the same unique data already exists. Please check your input.");
             }   
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new PersonException("An unexpected error occurred. Please contact support.");
             }

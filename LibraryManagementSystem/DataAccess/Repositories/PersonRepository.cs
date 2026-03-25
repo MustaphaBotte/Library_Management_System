@@ -1,19 +1,13 @@
-﻿using LMS.DTOs;
-using Microsoft.Data.SqlClient;
-using System.Data;
-using PersonDto = LMS.DTOs.PersonDto;
-using SqlExceptionHandler = LMS.DataAccess.Exceptions.SqlExceptionHandler;
-
-namespace LMS.DataAccess
+﻿namespace LMS.DataAccess.Repositories
 {
     public class PersonRepository
     {
-
-        public static async Task<int> AddNewPersonAsync(PersonDto personDto)
+        
+        public static async Task<int> AddNewPersonAsync(PersonEntity personEntity)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString.GetConnectionString()))
+                using (SqlConnection connection = new SqlConnection(ConnectionString.Value))
                 {
                     using (SqlCommand command = new SqlCommand("SP_InsertPerson", connection))
                     {
@@ -22,22 +16,22 @@ namespace LMS.DataAccess
                         output.Direction = ParameterDirection.Output;
                         SqlParameter[] parameters = new SqlParameter[] {
 
-                          new SqlParameter("firstname", personDto.FirstName),
-                          new SqlParameter("SecondName", personDto.LastName),
-                          new SqlParameter("Email", personDto.Email),
-                          new SqlParameter("PhoneNumber", personDto.PhoneNumber),
-                          new SqlParameter("DateOfBirth", personDto.@DateOfBirth),
-                          new SqlParameter("Gender", personDto.Gender),
-                          new SqlParameter("CountryID", personDto.CountryID),
-                          new SqlParameter("ProfilePicturePath", personDto.ProfilePicturePath==""?DBNull.Value: personDto.ProfilePicturePath),
-                          new SqlParameter("CreatedBy", personDto.CreatedBy == 0 ? DBNull.Value : personDto.CreatedBy),
+                          new SqlParameter("firstname", personEntity.FirstName),
+                          new SqlParameter("SecondName", personEntity.LastName),
+                          new SqlParameter("Email", personEntity.Email),
+                          new SqlParameter("PhoneNumber", personEntity.PhoneNumber),
+                          new SqlParameter("DateOfBirth", personEntity.@DateOfBirth),
+                          new SqlParameter("Gender", personEntity.Gender),
+                          new SqlParameter("CountryID", personEntity.CountryID),
+                          new SqlParameter("ProfilePicturePath", personEntity.ProfilePicturePath==""?DBNull.Value: personEntity.ProfilePicturePath),
+                          new SqlParameter("CreatedBy", personEntity.CreatedBy == 0 ? DBNull.Value : personEntity.CreatedBy),
                           output};
 
                         command.Parameters.AddRange(parameters);
 
                         await connection.OpenAsync();
                         await command.ExecuteNonQueryAsync();
-                        return Utils.IsNullOrDBNull(output.Value)?-1:(int)output.Value;
+                        return DbUtils.IsNullOrDBNull(output.Value)?-1:(int)output.Value;
                     }
                 }
             }
@@ -49,11 +43,11 @@ namespace LMS.DataAccess
             
         }
 
-        public static async Task<bool> UpdatePersonAsync(PersonDto personDto)
+        public static async Task<bool> UpdatePersonAsync(PersonEntity personEntity)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString.GetConnectionString()))
+                using (SqlConnection connection = new SqlConnection(ConnectionString.Value))
                 {
                     using (SqlCommand command = new SqlCommand("SP_UpdatePerson", connection))
                     {
@@ -61,21 +55,21 @@ namespace LMS.DataAccess
                         var output = new SqlParameter("IsSuccess", SqlDbType.Bit);
                         output.Direction = ParameterDirection.Output;
                         SqlParameter[] parameters = new SqlParameter[] {
-                        new SqlParameter("PersonID", (int)personDto.PersonId),
-                        new SqlParameter("firstname", personDto.FirstName),
-                        new SqlParameter("SecondName", personDto.LastName),
-                        new SqlParameter("Email", personDto.Email),
-                        new SqlParameter("PhoneNumber", personDto.PhoneNumber),
-                        new SqlParameter("DateOfBirth", personDto.@DateOfBirth),
-                        new SqlParameter("Gender", personDto.Gender),
-                        new SqlParameter("CountryID", personDto.CountryID),
-                        new SqlParameter("ProfilePicturePath", personDto.ProfilePicturePath==""?DBNull.Value: personDto.ProfilePicturePath),
+                        new SqlParameter("PersonID", (int)personEntity.PersonId),
+                        new SqlParameter("firstname", personEntity.FirstName),
+                        new SqlParameter("SecondName", personEntity.LastName),
+                        new SqlParameter("Email", personEntity.Email),
+                        new SqlParameter("PhoneNumber", personEntity.PhoneNumber),
+                        new SqlParameter("DateOfBirth", personEntity.@DateOfBirth),
+                        new SqlParameter("Gender", personEntity.Gender),
+                        new SqlParameter("CountryID", personEntity.CountryID),
+                        new SqlParameter("ProfilePicturePath", personEntity.ProfilePicturePath==""?DBNull.Value: personEntity.ProfilePicturePath),
                         output};
                         command.Parameters.AddRange(parameters);
 
                         await connection.OpenAsync();
                         await command.ExecuteNonQueryAsync();
-                        return Utils.IsNullOrDBNull(output.Value) ? false : (bool)output.Value;
+                        return DbUtils.IsNullOrDBNull(output.Value) ? false : (bool)output.Value;
                     }
                 }
             }
@@ -91,7 +85,7 @@ namespace LMS.DataAccess
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString.GetConnectionString()))
+                using (SqlConnection connection = new SqlConnection(ConnectionString.Value))
                 {
                     using (SqlCommand command = new SqlCommand("SP_DeletePerson", connection))
                     {
@@ -107,7 +101,7 @@ namespace LMS.DataAccess
                         await connection.OpenAsync();
                         await command.ExecuteNonQueryAsync();
 
-                        return Utils.IsNullOrDBNull(DeleteStatus.Value)? false : (bool)DeleteStatus.Value;
+                        return DbUtils.IsNullOrDBNull(DeleteStatus.Value)? false : (bool)DeleteStatus.Value;
 
                     }
                 }
@@ -119,12 +113,12 @@ namespace LMS.DataAccess
             }          
         }
 
-        public static async Task<PersonDto?> GetPersonAsync(uint PersonID)
+        public static async Task<PersonEntity?> GetPersonAsync(uint PersonID)
         {
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString.GetConnectionString()))
+                using (SqlConnection connection = new SqlConnection(ConnectionString.Value))
                 {
                     using (SqlCommand command = new SqlCommand("SP_GetPersonByID", connection))
                     {
@@ -139,7 +133,7 @@ namespace LMS.DataAccess
                             if (!await Reader.ReadAsync())
                                 return null;
 
-                            return new PersonDto(
+                            return new PersonEntity(
                                       personID: (uint)Reader["PersonID"],
                                       firstName: (string)Reader["FirstName"],
                                       lastName: (string)Reader["SecondName"],
@@ -150,7 +144,7 @@ namespace LMS.DataAccess
                                       createdAt: (DateTime)Reader["CreatedAt"],
                                       updatedAt: (DateTime)Reader["UpdatedAt"],
                                       createdBy: Reader["CreatedBy"] as int?,
-                                      countryId: (int)Reader["CountryID"],
+                                      countryId: (uint)Reader["CountryID"],
                                       profilePicturePath: Reader["ProfilePicturePath"] as string,
                                       isDeleted: (bool)Reader["IsDeleted"]
                                       );
@@ -171,7 +165,7 @@ namespace LMS.DataAccess
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString.GetConnectionString()))
+                using (SqlConnection connection = new SqlConnection(ConnectionString.Value))
                 {
                     using (SqlCommand command = new SqlCommand("SP_GetPeopleByLastId", connection))
                     {
@@ -211,7 +205,7 @@ namespace LMS.DataAccess
             }
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString.GetConnectionString()))
+                using (SqlConnection connection = new SqlConnection(ConnectionString.Value))
                 {
                     using (SqlCommand command = new SqlCommand("select top 1 1 from people where Email = @email and IsDeleted=0", connection))
                     {
@@ -244,7 +238,7 @@ namespace LMS.DataAccess
             }
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString.GetConnectionString()))
+                using (SqlConnection connection = new SqlConnection(ConnectionString.Value))
                 {
                     using (SqlCommand command = new SqlCommand("select top 1 1 from people where PhoneNumber = @PhoneNumber  and IsDeleted=0", connection))
                     {
@@ -274,14 +268,14 @@ namespace LMS.DataAccess
             
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString.GetConnectionString()))
+                using (SqlConnection connection = new SqlConnection(ConnectionString.Value))
                 {
                     using (SqlCommand command = new SqlCommand("select top 1 1 from people where PersonID = @PersonID  and IsDeleted=0", connection))
                     {
 
                         command.Parameters.AddWithValue("@PersonID", PersonID);
 
-
+                        
                         await connection.OpenAsync();
                         object? Result = await command.ExecuteScalarAsync();
                         if (Result != null)

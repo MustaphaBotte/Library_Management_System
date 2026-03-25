@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "..\DataAccess
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLayer", "..\BusinessLayer\BusinessLayer.csproj", "{5B7DDF32-20D1-4694-9E42-0FBC47C05A93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTOs", "..\DTOs\DTOs.csproj", "{6A0D2AA3-CED7-4DBB-B976-29D4EB4F7AB8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "..\Console\ConsoleApp1\ConsoleApp1.csproj", "{E33656EF-F20F-433F-905C-74A74DBA48E2}"
 EndProject
 Global
@@ -31,10 +29,6 @@ Global
 		{5B7DDF32-20D1-4694-9E42-0FBC47C05A93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B7DDF32-20D1-4694-9E42-0FBC47C05A93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B7DDF32-20D1-4694-9E42-0FBC47C05A93}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6A0D2AA3-CED7-4DBB-B976-29D4EB4F7AB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6A0D2AA3-CED7-4DBB-B976-29D4EB4F7AB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6A0D2AA3-CED7-4DBB-B976-29D4EB4F7AB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6A0D2AA3-CED7-4DBB-B976-29D4EB4F7AB8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E33656EF-F20F-433F-905C-74A74DBA48E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E33656EF-F20F-433F-905C-74A74DBA48E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E33656EF-F20F-433F-905C-74A74DBA48E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
