@@ -5,20 +5,20 @@
         public uint PersonId { private set; get; } = 0;
         public string FirstName { set; get; } = "";
         public string LastName { set; get; } = "";
-        public string Email { set; get; } = "";
+        public string? Email { set; get; } = "";
         public string PhoneNumber { set; get; } = "";
         public DateTime DateOfBirth { set; get; } = DateTime.Now.AddYears(-18);
         public char Gender { set; get; } = '?';
         public DateTime CreatedAt { set; get; } = DateTime.Now;
         public DateTime UpdatedAt { set; get; } = DateTime.Now;
-        public int CreatedBy { set; get; } = -1;
+        public int? CreatedBy { set; get; } = -1;
         public int CountryID { set; get; } = -1;
-        public string ProfilePicturePath { set; get; } = "";
+        public string? ProfilePicturePath { set; get; } = "";
 
         public bool IsDeleted { set; get; } = false;
 
-        public PersonDto(uint personID, string firstName, string lastName, string email,string phonenumber, DateTime dateOfBirth, char gender,
-                    DateTime createdAt, DateTime updatedAt, int createdBy, int countryId, string profilePicturePath, bool isDeleted)
+        public PersonDto(uint personID, string firstName, string lastName, string? email,string phonenumber, DateTime dateOfBirth, char gender,
+                    DateTime createdAt, DateTime updatedAt, int? createdBy, int countryId, string? profilePicturePath, bool isDeleted)
         {
             PersonId = personID;
             FirstName = firstName;
