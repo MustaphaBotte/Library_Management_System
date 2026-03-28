@@ -27,9 +27,3 @@ begin catch
 end catch
 
 END
-
-declare @id int;
-exec SP_InsertPerson '','',',',',','2023-10-10','2023-10-10','m',1,'',null,@id output;
-select  @id;
-
-select * from People

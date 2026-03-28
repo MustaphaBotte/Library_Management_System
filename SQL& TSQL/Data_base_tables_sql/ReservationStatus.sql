@@ -11,4 +11,4 @@ INSERT INTO dbo.GeneralStatus (StatusID, StatusName) VALUES
 (4, N'Expired');
 
 
-
+ -- active , expired, suspended, cancelled     

@@ -17,7 +17,7 @@ BEGIN
             UpdatedAt,
             CreatedBy
         FROM People
-        WHERE PersonID = 28 AND IsDeleted = 0;
+        WHERE PersonID = @PersonID AND IsDeleted = 0;
     END TRY
     BEGIN CATCH
         EXEC SP_SaveErrors;
