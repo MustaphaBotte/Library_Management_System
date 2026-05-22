@@ -1,8 +1,5 @@
 CREATE OR ALTER PROCEDURE SP_InsertMember
     @PersonID           INT,
-    @Username           NVARCHAR(20),
-    @PasswordHash       NVARCHAR(255),
-    @PasswordSalt       NVARCHAR(255),
     @LibraryID          INT,
 	@Notes              Nvarchar(500),
 	@ExpiredAt          DateTime,
@@ -11,19 +8,13 @@ AS
 BEGIN
     BEGIN TRY
         INSERT INTO Members(
-            PersonID,
-            Username,
-            PasswordHash,
-            PasswordSalt,
+            PersonID,        
             LibraryID,
 			Notes,
 			ExpiredAt
         )
         VALUES (
             @PersonID    ,
-            @Username    ,
-            @PasswordHash,
-            @PasswordSalt,
             @LibraryID   ,
 	        @Notes       ,
 	        @ExpiredAt   

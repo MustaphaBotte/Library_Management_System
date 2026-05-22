@@ -8,6 +8,7 @@ BEGIN
             FirstName,
             SecondName,
             Email,
+			PasswordHash,
             PhoneNumber,
             DateOfBirth,
             Gender,

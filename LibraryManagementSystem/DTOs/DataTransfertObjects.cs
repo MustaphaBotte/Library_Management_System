@@ -1,29 +1,30 @@
-﻿namespace LMS.DTOs
+﻿namespace LMS.DataAccess.DTOs
 {
-    public class PersonDto
+    public class PersonDTO
     {
         public uint PersonId { private set; get; } = 0;
         public string FirstName { set; get; } = "";
-        public string LastName { set; get; } = "";
+        public string SecondName { set; get; } = "";
         public string? Email { set; get; } = "";
+        public string PasswordHash { set; get; } = "";
         public string PhoneNumber { set; get; } = "";
-        public DateTime DateOfBirth { set; get; } = DateTime.Now.AddYears(-18);
+        public DateTime DateOfBirth { set; get; }
         public char Gender { set; get; } = '?';
         public DateTime CreatedAt { set; get; } = DateTime.Now;
         public DateTime UpdatedAt { set; get; } = DateTime.Now;
-        public int? CreatedBy { set; get; } = -1;
-        public int CountryID { set; get; } = -1;
+        public int? CreatedBy { set; get; } =null;
+        public uint CountryID { set; get; } = 0;
         public string? ProfilePicturePath { set; get; } = "";
-
         public bool IsDeleted { set; get; } = false;
 
-        public PersonDto(uint personID, string firstName, string lastName, string? email,string phonenumber, DateTime dateOfBirth, char gender,
-                    DateTime createdAt, DateTime updatedAt, int? createdBy, int countryId, string? profilePicturePath, bool isDeleted)
+        public PersonDTO(uint personID, string firstName, string secondName,  string? email, string phonenumber, string PasswordHash, DateTime dateOfBirth, char gender,
+                    DateTime createdAt, DateTime updatedAt, int? createdBy, uint countryId, string? profilePicturePath, bool isDeleted)
         {
             PersonId = personID;
+            SecondName = secondName;
             FirstName = firstName;
-            LastName = lastName;
             Email = email;
+            PasswordHash = 
             PhoneNumber = phonenumber;
             DateOfBirth = dateOfBirth;
             Gender = gender;
@@ -35,37 +36,65 @@
             IsDeleted = isDeleted;
         }
     }
-    public class MemberDto
+    public class MemberDTO
     {
-        public MemberDto(uint PersonId, uint memberId, uint personId, string username, string passwordHash, string passwordSalt, DateTime joinedAt,
-                        DateTime expiredAt, bool isBanned, int memberShipStatusId, DateTime lastBorrowAt, uint libraryId, string notes)
+        public MemberDTO(uint personId, uint memberId, DateTime expiredAt, bool isBanned,
+            int memberShipStatusId,uint libraryId, string notes)
         {
-            this.PersonId = PersonId ;
+            this.PersonId = personId;
             this.MemberId = memberId;
-            this.Username = username;
-            this.PasswordHash = passwordHash;
-            this.PasswordSalt = passwordSalt;
-            this.JoinedAt = joinedAt;
             this.ExpiredAt = expiredAt;
             this.IsBanned = isBanned;
             this.MemberShipStatusId = memberShipStatusId;
-            this.LastBorrowAt = lastBorrowAt;
             this.LibraryId = libraryId;
             this.Notes = notes;
         }
         public uint PersonId { private set; get; } = 0;
         public uint MemberId { private set; get; } = 0;
-        public string Username { set; get; } = "";
-        public string PasswordHash { set; get; } = "";
-        public string PasswordSalt { set; get; } = "";
-        public DateTime JoinedAt { set; get; } = DateTime.Now;
         public DateTime ExpiredAt { set; get; } = DateTime.Now.AddYears(1);
         public bool IsBanned { set; get; } = false;
         public int MemberShipStatusId { set; get; } = -1;
-        public DateTime LastBorrowAt { set; get; } = DateTime.Now.AddYears(1);
         public uint LibraryId { set; get; } = 0;
         public string Notes { set; get; } = "";
     }
 
+    // for the api 
+    public class Profile
 
+    {
+        public Profile(uint memberID , string firstName, string lastName, string email, string plainPassword, string phoneNumber, 
+                                 DateTime dateOfBirth, char gender, uint countryId, uint libraryId)
+        {
+            MemberId = memberID;
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            PlainPassword = plainPassword;
+            PhoneNumber = phoneNumber;
+            DateOfBirth = dateOfBirth;
+            Gender = gender;
+            CountryId = countryId;
+            LibraryId = libraryId;
+        }
+        public uint MemberId { private set; get; }
+        public string FirstName { get; set; } = "";
+        public string LastName { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string PlainPassword { get; set; } = "";
+        public string PhoneNumber { get; set; } = "";
+        public DateTime DateOfBirth { get; set; }
+        public char Gender { get; set; }
+        public uint CountryId { get; set; }
+        public uint LibraryId { get; set; }
+    }
+    public class CountryDTO
+    {
+        public CountryDTO(uint countryId, string countryName)
+        {
+            CountryId = countryId;
+            CountryName = countryName;
+        }
+        public uint CountryId { get; }
+        public string CountryName { get; }
+    }
 }

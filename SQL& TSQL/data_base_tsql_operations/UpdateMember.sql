@@ -1,9 +1,5 @@
 CREATE OR ALTER PROCEDURE SP_UpdateMember
-    @MemberID           INT,
-    @Username           NVARCHAR(20),
-    @PasswordHash       NVARCHAR(255),
-    @PasswordSalt       NVARCHAR(255),
-    @LibraryID          INT,
+    @MemberID           INT,  
     @Notes              NVARCHAR(500),
     @ExpiredAt          DATETIME,
     @IsSuccess          BIT OUTPUT
@@ -18,11 +14,7 @@ BEGIN
         END
 
         UPDATE Members
-        SET
-            Username      = @Username,
-            PasswordHash  = @PasswordHash,
-            PasswordSalt  = @PasswordSalt,
-            LibraryID     = @LibraryID,
+        SET         
             Notes         = @Notes,
             ExpiredAt     = @ExpiredAt
         WHERE MemberID = @MemberID;

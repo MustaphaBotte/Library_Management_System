@@ -1,6 +1,6 @@
 ﻿namespace LMS.BusinessLayer
 {
-    public class PersonService
+    public class Person
     {
         public class PersonException:Exception
         {
@@ -15,7 +15,7 @@
         EnMode _Mode = EnMode.Add ;
 
         public uint PersonId { get; private set; } = 0;
-
+        
         private string _firstName = "";
         public string FirstName
         {
@@ -30,17 +30,17 @@
             }
         }
 
-        private string _lastName = "";
-        public string LastName
+        private string _secondName = "";
+        public string SecondName
         {
-            get => _lastName;
+            get => _secondName;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentNullException(nameof(LastName), "The Last Name cannot be empty!");
+                    throw new ArgumentNullException(nameof(_secondName), "The Last Name cannot be empty!");
                 if (!Regex.IsMatch(value, @"^[A-Za-zÀ-ÿ\s'-]+$"))
                     throw new ArgumentException("The Last Name contains invalid characters.");
-                _lastName = value;
+                _secondName = value;
             }
         }
 
@@ -65,16 +65,33 @@
             get => _phoneNumber;
             set
             {
-                if (!string.IsNullOrWhiteSpace(value) && !Regex.IsMatch(value, @"^\+?[0-9\s\-]{7,15}$"))
-                {
-                    _phoneNumber = value;
-                }
-                else throw new ArgumentException("Invalid Phone Number format.");
-                  
+                if (string.IsNullOrWhiteSpace(value)||!Regex.IsMatch(value, @"^\+?[0-9\s\-]{7,15}$"))              
+                    throw new ArgumentException("Invalid Phone Number format.");
+                
+                _phoneNumber = value;
             }
         }
 
-        public DateTime DateOfBirth { get; set; } = DateTime.Now.AddYears(-18);
+        private string _passwordHash = "";
+        private string Password {
+            set
+            {
+                if (!Regex.IsMatch(value, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':""\\|,.<>\/?]).{8,64}$"))
+                    throw new ArgumentException("PasswordHash must be 8-64 characters and include uppercase, lowercase, number, and special character.");
+
+                _passwordHash = BCrypt.Net.BCrypt.HashPassword(value, workFactor: 12);
+            }
+        }
+      
+        private DateTime _dateOfBirth { get; set; } = DateTime.Now.AddYears(-18);
+        public DateTime DateOfBirth { get => _dateOfBirth;
+            set
+            {
+                if (value > DateTime.Now.AddYears(-18))
+                    throw new ArgumentException("Member must be at least 18 years old.");
+                _dateOfBirth = value;
+            }
+        }
 
         private char _gender = ' ';
         public char Gender
@@ -82,9 +99,12 @@
             get => _gender;
             set
             {
-                if (value != 'M' && value != 'F')
+                char toUpperCase = char.ToUpper(value);
+                if (toUpperCase != 'M' && toUpperCase != 'F')
+                {
                     throw new ArgumentException("Gender must be 'M', 'F'");
-                _gender = value;
+                }
+                _gender = toUpperCase;
             }
         }
 
@@ -93,42 +113,59 @@
         public int? CreatedBy { get; set; } = null;
         public string? ProfilePicturePath { get; set; } = "";
 
-        public (uint CountryId, string CountryName) Country; 
-        public PersonService() 
-        {
-            this._Mode = EnMode.Add;
-        }
+        public uint CountryID { set; get; } = 0;
 
-        public PersonService(PersonEntity dto)
+        public CountryDTO? Country = null;      
+        public bool IsDeleted { set; get; } = false;
+
+        public Person(Profile dto)
         {
-            PersonId = dto.PersonId;
+          
             FirstName = dto.FirstName;
-            LastName = dto.LastName;
+            _secondName = dto.LastName;
             Email = dto.Email;
+            Password = dto.PlainPassword;
             PhoneNumber = dto.PhoneNumber;
             DateOfBirth = dto.DateOfBirth;
             Gender = dto.Gender;
+            CountryID = dto.CountryId;
+            this._Mode = EnMode.Add;
+        }  
+        private Person(PersonDTO dto)
+        {
+            PersonId = dto.PersonId;
+            FirstName = dto.FirstName;
+            SecondName = dto.SecondName;
+            Email = dto.Email;
+            _passwordHash = dto.PasswordHash;
+            PhoneNumber = dto.PhoneNumber;
+            DateOfBirth = dto.DateOfBirth;
+            Gender = dto.Gender;
+            CountryID = dto.CountryID;
             CreatedAt = dto.CreatedAt;
             UpdatedAt = dto.UpdatedAt;
             CreatedBy = dto.CreatedBy;
             ProfilePicturePath = dto.ProfilePicturePath;
             this._Mode = EnMode.Update;
         }
-        public static async Task<PersonService?> GetPersonAsync(uint PersonID)
+
+        private PersonDTO personDTO => new PersonDTO(PersonId,FirstName, SecondName, Email,
+                                                 PhoneNumber,_passwordHash, DateOfBirth, Gender, CreatedAt, UpdatedAt, CreatedBy,CountryID,ProfilePicturePath, IsDeleted);
+        
+        
+        public static async Task<PersonDTO?> GetPersonAsync(uint PersonID)
         {
-           var PersonEntity =await PersonRepository.GetPersonAsync(PersonID);
-            if(PersonEntity!=null)
+            var PersonDTO =await PersonRepository.GetPersonAsync(PersonID);
+            if(PersonDTO!=null)
             {
                 
-                var Person = new PersonService(PersonEntity);
-                var Country =await CountryRepository.GetCountryById(PersonEntity.CountryID);
+                var Person = new Person(PersonDTO);
+                var Country =await CountryRepository.GetCountryById(PersonDTO.CountryID);
                 if(Country!=null)
                 {
-                    
-                    Person.Country.CountryId = Country.CountryId;
-                    Person.Country.CountryName = Country.CountryName;
+                    Person.Country = Country;
                 }
-                return Person;
+                return Person.personDTO;
             }
             return null;
         }
@@ -146,59 +183,51 @@
         {
             return await PersonRepository.IsPhoneNumberExists(PhoneNumber);
         }
-        public static async Task<DataTable?> GetPeopleAsync(int LastId, int Rows = 10)
+        public static async Task<List<PersonDTO>?> GetPeopleAsync(int LastId, int Rows = 10)
         {
+            Rows = Rows > 10 || Rows < 1 ? 10 : Rows; // only fetch from 1 to 10 rows at a time
             return await PersonRepository.GetPeopleAsync(LastId,Rows);        
         }
-        public async Task<bool> Save()
+
+        private async Task<int> _AddPersonAsync()
+        {
+            CountryDTO? country = await CountryRepository.GetCountryById(CountryID);
+            if(country==null)
+                throw new ArgumentException("Country not found");
+
+            if (await Person.IsEmailExists(Email??""))
+                throw new ArgumentException("Email Already In Use");
+
+            if (await Person.IsPhoneNumberExists(PhoneNumber))
+                throw new ArgumentException("Phone Number Already In Use");
+
+            int personID = await PersonRepository.AddNewPersonAsync(this.personDTO);
+            return personID;
+        }
+
+        /// <summary>
+        /// Exceptions are intentionally not caught here.
+        /// SQL exceptions are handled and translated at the repository layer (PersonRepository).
+        /// </summary>
+        public virtual async Task<bool> Save()
         {
             
-            var PersonEntity = new PersonEntity(PersonId, FirstName, LastName, Email, PhoneNumber, DateOfBirth, Gender, CreatedAt, UpdatedAt,
-                    CreatedBy,Country.CountryId, ProfilePicturePath, false);
+           
+            switch (this._Mode)
+            {
+                case EnMode.Add:
+                 int insertedId = await _AddPersonAsync();
+                 if (insertedId > 0)
+                 {
+                    this._Mode = EnMode.Update;
+                    PersonId = (uint)insertedId;
+                    return true;
+                 }
+                 break;
 
-            try
-            {
-                switch (this._Mode)
-                {
-                    case EnMode.Add:
-                    int InsertedId = await PersonRepository.AddNewPersonAsync(PersonEntity);
-                    if (InsertedId > 0)
-                    {
-                        this.PersonId = (uint)InsertedId;
-                        return true;
-                    }
-                        break;
-
-                    case EnMode.Update:                 
-                    bool IsSuccess = await PersonRepository.UpdatePersonAsync(PersonEntity);
-                    return IsSuccess;
-                  
-                }
-            }
-            catch (CannotInsertNullException)
-            {
-                throw new PersonException("Some required fields are missing. Please fill all mandatory fields");
-            }
-            catch (OperationTimeoutException)
-            {
-                throw new PersonException("The operation timed out. Please try again in a few moments.");
-            }
-            catch (ForeignKeyViolationException)
-            {
-                throw new PersonException("Cannot complete this operation because related data does not exist.");
-            }
-            catch (StringTruncationException)
-            {
-                throw new PersonException("One of the input values is too long. Please shorten it and try again.");
-            }
-            catch (UniqueConstraintViolation)
-            {
-                throw new PersonException("A record with the same unique data already exists. Please check your input.");
-            }   
-            catch (Exception)
-            {
-                throw new PersonException("An unexpected error occurred. Please contact support.");
-            }
+                case EnMode.Update:
+                    return await PersonRepository.UpdatePersonAsync(this.personDTO);
+            }     
             return false;           
         }
 

@@ -7,7 +7,6 @@ ALTER PROCEDURE SP_UpdatePerson
     @DateOfBirth date,
     @Gender char(1),
     @CountryID int,
-    @ProfilePicturePath nvarchar(500) = NULL,
     @IsSuccess bit OUTPUT
 AS
 BEGIN
@@ -27,7 +26,6 @@ BEGIN
             DateOfBirth        = @DateOfBirth,
             Gender             = @Gender,
             CountryID          = @CountryID,
-            ProfilePicturePath = @ProfilePicturePath,
             UpdatedAt          = GETDATE()
         WHERE PersonID = @PersonID AND IsDeleted = 0;
 
@@ -38,6 +36,3 @@ BEGIN
         THROW;
     END CATCH
 END
-
-
-select * from People

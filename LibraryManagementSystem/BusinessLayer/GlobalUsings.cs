@@ -2,7 +2,7 @@
 global using LMS.DataAccess.Exceptions;
 global using System.Net.Mail;
 global using System.Text.RegularExpressions;
-global using LMS.DataAccess.Entities;
+global using LMS.DataAccess.DTOs;
 global using System.Data;
 
 

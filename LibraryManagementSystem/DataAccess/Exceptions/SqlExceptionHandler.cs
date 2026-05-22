@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace LMS.DataAccess.Exceptions
 {

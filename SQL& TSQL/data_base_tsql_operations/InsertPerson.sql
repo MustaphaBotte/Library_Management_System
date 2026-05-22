@@ -2,6 +2,7 @@ ALTER  PROCEDURE SP_InsertPerson
     @FirstName nvarchar(50),
     @SecondName nvarchar(50),
     @Email nvarchar(255),
+	@PasswordHash nvarchar(255),
     @PhoneNumber nvarchar(15),
     @DateOfBirth date,
     @Gender char(1),
@@ -12,9 +13,9 @@ ALTER  PROCEDURE SP_InsertPerson
 AS
 BEGIN
 begin try
-   insert into People(FirstName,SecondName,Email,PhoneNumber,DateOfBirth,Gender,CreatedBy,CountryID,ProfilePicturePath,IsDeleted)
+   insert into People(FirstName,SecondName,Email,PhoneNumber,DateOfBirth,Gender,CreatedBy,CountryID,ProfilePicturePath,IsDeleted,PasswordHash)
 
-   values(@FirstName, @SecondName, @Email,@PhoneNumber,@DateOfBirth, @Gender,@CreatedBy,@CountryID,@ProfilePicturePath,0);
+   values(@FirstName, @SecondName, @Email,@PhoneNumber,@DateOfBirth, @Gender,@CreatedBy,@CountryID,@ProfilePicturePath,0,@PasswordHash);
 
    set @InsertedID = SCOPE_IDENTITY();
    return 0 ; --success

@@ -1,158 +1,134 @@
-﻿namespace LMS.DataAccess.Repositories
+﻿using LMS.DataAccess.DTOs;
+
+namespace LMS.DataAccess.Repositories
 {
     public class MemberRepository
     {
-        public static async Task<int> AddNewMemberAsync(MemberEntity memberEntity)
+        public static async Task<int> AddNewMemberAsync(MemberDTO MemberDTO)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString.Value))
-                {
-                    using (SqlCommand command = new SqlCommand("SP_InsertMember", connection))
-                    {
-                        command.CommandType = CommandType.StoredProcedure;
-                        var output = new SqlParameter("InsertedID", SqlDbType.Int);
-                        output.Direction = ParameterDirection.Output;
-                        SqlParameter[] parameters = new SqlParameter[] {
+                await using SqlConnection connection = new SqlConnection(ConnectionString.Value);
 
-                          new SqlParameter("PersonID   ", memberEntity.PersonId),
-                          new SqlParameter("@Username", memberEntity.Username),
-                          new SqlParameter("@PasswordHash", memberEntity.PasswordHash),
-                          new SqlParameter("@PasswordSalt", memberEntity.PasswordSalt),
-                          new SqlParameter("LibraryID", memberEntity.LibraryId),
-                          new SqlParameter("Notes",DbUtils.IsNullOrDBNull(memberEntity.Notes)?DBNull.Value:memberEntity.Notes),
-                          new SqlParameter("ExpiredAt", memberEntity.ExpiredAt),                         
-                          output};
+                await using SqlCommand command = new SqlCommand("SP_InsertMember", connection);
+                    
+                command.CommandType = CommandType.StoredProcedure;
+                var output = new SqlParameter("InsertedID", SqlDbType.Int);
+                output.Direction = ParameterDirection.Output;
+                SqlParameter[] parameters = new SqlParameter[] {
 
-                        command.Parameters.AddRange(parameters);
+                  new SqlParameter("PersonID   ", MemberDTO.PersonId),
+                  new SqlParameter("LibraryID", MemberDTO.LibraryId),
+                  new SqlParameter("Notes",DbUtils.IsNullOrDBNull(MemberDTO.Notes)?DBNull.Value:MemberDTO.Notes),
+                  new SqlParameter("ExpiredAt", MemberDTO.ExpiredAt),                         
+                  output};
 
-                        await connection.OpenAsync();
-                        await command.ExecuteNonQueryAsync();
-                        return DbUtils.IsNullOrDBNull(output.Value) ? -1 : (int)output.Value;
-                    }
-                }
+                command.Parameters.AddRange(parameters);
+
+                await connection.OpenAsync();
+                await command.ExecuteNonQueryAsync();
+                return DbUtils.IsNullOrDBNull(output.Value) ? -1 : (int)output.Value;
+                                 
             }
             catch (SqlException e)
             {
                 SqlExceptionHandler.Handle(e);
-                throw;
             }
-
+            return -1;
         }
 
-        public static async Task<bool> UpdateMemberAsync(MemberEntity memberEntity)
+        public static async Task<bool> UpdateMemberAsync(MemberDTO MemberDTO)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString.Value))
+                await using SqlConnection connection = new SqlConnection(ConnectionString.Value);
+                await using SqlCommand command = new SqlCommand("SP_UpdateMember", connection);
+                    
+                command.CommandType = CommandType.StoredProcedure;
+                var output = new SqlParameter("IsSuccess", SqlDbType.Bit)
                 {
-                    using (SqlCommand command = new SqlCommand("SP_UpdateMember", connection))
-                    {
-                        command.CommandType = CommandType.StoredProcedure;
-                        var output = new SqlParameter("IsSuccess", SqlDbType.Bit);
-                        output.Direction = ParameterDirection.Output;
-                        SqlParameter[] parameters = new SqlParameter[] {
-                        new SqlParameter("MemberID", (int)memberEntity.MemberId),
-                        new SqlParameter("Username", memberEntity.Username),
-                        new SqlParameter("PasswordHash", memberEntity.PasswordHash),
-                        new SqlParameter("PasswordSalt", memberEntity.PasswordSalt),
-                        new SqlParameter("LibraryID", memberEntity.LibraryId),
-                        new SqlParameter("Notes", memberEntity.Notes),
-                        new SqlParameter("ExpiredAt", memberEntity.ExpiredAt),
-                        output};
-                        command.Parameters.AddRange(parameters);
+                    Direction = ParameterDirection.Output
+                };
 
-                        await connection.OpenAsync();
-                        await command.ExecuteNonQueryAsync();
-                        return DbUtils.IsNullOrDBNull(output.Value) ? false : (bool)output.Value;
-                    }
-                }
+                SqlParameter[] parameters = new SqlParameter[] {
+                new SqlParameter("MemberID", (int)MemberDTO.MemberId),          
+                new SqlParameter("Notes", MemberDTO.Notes),
+                new SqlParameter("ExpiredAt", MemberDTO.ExpiredAt),
+                output};
+                command.Parameters.AddRange(parameters);
+
+                await connection.OpenAsync();
+                await command.ExecuteNonQueryAsync();
+                return DbUtils.IsNullOrDBNull(output.Value) ? false : (bool)output.Value;                                  
             }
             catch (SqlException e)
             {
                 SqlExceptionHandler.Handle(e); // throws the specific exception
-
-                throw;
             }
+            return false;
         }
 
         public static async Task<bool> DeleteMemberAsync(uint MemberID)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString.Value))
-                {
-                    using (SqlCommand command = new SqlCommand("SP_DeleteMember", connection))
-                    {
-                        command.CommandType = CommandType.StoredProcedure;
+                using SqlConnection connection = new SqlConnection(ConnectionString.Value);
 
-                        SqlParameter DeleteStatus = new SqlParameter("IsSuccess", SqlDbType.Bit);
-                        DeleteStatus.Direction = ParameterDirection.Output;
+                using SqlCommand command = new SqlCommand("SP_DeleteMember", connection);
+                    
+                 command.CommandType = CommandType.StoredProcedure;
 
-                        command.Parameters.AddWithValue("MemberID", (int)MemberID);
-                        command.Parameters.Add(DeleteStatus);
+                 SqlParameter DeleteStatus = new SqlParameter("IsSuccess", SqlDbType.Bit);
+                 DeleteStatus.Direction = ParameterDirection.Output;
+
+                 command.Parameters.AddWithValue("MemberID", (int)MemberID);
+                 command.Parameters.Add(DeleteStatus);
 
 
-                        await connection.OpenAsync();
-                        await command.ExecuteNonQueryAsync();
+                 await connection.OpenAsync();
+                 await command.ExecuteNonQueryAsync();
 
-                        return DbUtils.IsNullOrDBNull(DeleteStatus.Value) ? false : (bool)DeleteStatus.Value;
-
-                    }
-                }
+                 return DbUtils.IsNullOrDBNull(DeleteStatus.Value) ? false : (bool)DeleteStatus.Value;
             }
             catch (SqlException e)
             {
                 SqlExceptionHandler.Handle(e);
-                throw;
             }
+            return false; 
         }
 
-        public static async Task<MemberEntity?> GetMemberAsync(uint MemberID)
+        public static async Task<MemberDTO?> GetMemberAsync(uint MemberID)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString.Value))
-                {
-                    using (SqlCommand command = new SqlCommand("SP_GetMemberByID", connection))
-                    {
-                        command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddWithValue("MemberID", (int)MemberID);
-                        await connection.OpenAsync();
-                        using (SqlDataReader Reader = await command.ExecuteReaderAsync())
-                        {
-                            if (!await Reader.ReadAsync())
-                                return null;
-                            return new MemberEntity(
-                                (uint)Reader["PersonID"],
-                                (uint)Reader["MemberID"],
-                                (string)Reader["Username"],
-                                (string)Reader["PasswordHash"],
-                                (string)Reader["PasswordSalt"],
-                                (DateTime)Reader["JoinedAt"],
-                                (DateTime)Reader["ExpiredAt"],
-                                (bool)Reader["IsBanned"],
-                                (int)Reader["MembershipStatusID"],
-                                Reader["LastBorrowAt"] as DateTime?,
-                                (uint)Reader["LibraryID"],
-                                Reader["Notes"] as string
-                            );
-                        }
-                    }
-                }
+                using SqlConnection connection = new SqlConnection(ConnectionString.Value);
+
+                using SqlCommand command = new SqlCommand("SP_GetMemberByID", connection);
+                    
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("MemberID", (int)MemberID);
+                await connection.OpenAsync();
+                using SqlDataReader Reader = await command.ExecuteReaderAsync();
+                
+                    if (!await Reader.ReadAsync())
+                        return null;
+
+                return new MemberDTO(
+                    (uint)Reader["PersonID"],
+                    (uint)Reader["MemberID"],                  
+                    (DateTime)Reader["ExpiredAt"],
+                    (bool)Reader["IsBanned"],
+                    (int)Reader["MembershipStatusID"],
+                    (uint)Reader["LibraryID"],
+                    Reader["Notes"] == DBNull.Value ? "": (string)Reader["Notes"]
+                );
             }
             catch (SqlException e)
             {
                 SqlExceptionHandler.Handle(e);
-                throw;
             }
+            return null;
         }
-
-
-
-
-
-
 
 
     }
