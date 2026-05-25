@@ -7,6 +7,7 @@ ALTER PROCEDURE SP_UpdatePerson
     @DateOfBirth date,
     @Gender char(1),
     @CountryID int,
+	@Notes nvarchar(500),
     @IsSuccess bit OUTPUT
 AS
 BEGIN
@@ -26,6 +27,7 @@ BEGIN
             DateOfBirth        = @DateOfBirth,
             Gender             = @Gender,
             CountryID          = @CountryID,
+			Notes              = @Notes,  
             UpdatedAt          = GETDATE()
         WHERE PersonID = @PersonID AND IsDeleted = 0;
 

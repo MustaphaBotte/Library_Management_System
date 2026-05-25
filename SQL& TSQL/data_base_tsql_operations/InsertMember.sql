@@ -1,7 +1,6 @@
 CREATE OR ALTER PROCEDURE SP_InsertMember
     @PersonID           INT,
     @LibraryID          INT,
-	@Notes              Nvarchar(500),
 	@ExpiredAt          DateTime,
     @InsertedID         INT OUTPUT
 AS
@@ -10,13 +9,11 @@ BEGIN
         INSERT INTO Members(
             PersonID,        
             LibraryID,
-			Notes,
 			ExpiredAt
         )
         VALUES (
             @PersonID    ,
             @LibraryID   ,
-	        @Notes       ,
 	        @ExpiredAt   
         );
 

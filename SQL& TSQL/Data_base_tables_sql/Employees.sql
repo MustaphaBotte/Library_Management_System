@@ -8,6 +8,7 @@ IsActive bit not null ,
 PersonID int not null,
 ManagerID int null,
 LibraryID int not null,
+IsDeleted bit not null,
 foreign key (PersonID) references People(PersonID),
 foreign key (ManagerID) references Employees(EmployeeID),
 foreign key (LibraryID) references Library(LibraryID)

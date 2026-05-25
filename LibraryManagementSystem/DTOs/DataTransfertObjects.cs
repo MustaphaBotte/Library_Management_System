@@ -16,15 +16,17 @@
         public uint CountryID { set; get; } = 0;
         public string? ProfilePicturePath { set; get; } = "";
         public bool IsDeleted { set; get; } = false;
+        public string? Notes { set; get; } = "";
 
-        public PersonDTO(uint personID, string firstName, string secondName,  string? email, string phonenumber, string PasswordHash, DateTime dateOfBirth, char gender,
-                    DateTime createdAt, DateTime updatedAt, int? createdBy, uint countryId, string? profilePicturePath, bool isDeleted)
+        public PersonDTO(uint personID, string firstName, string secondName,  string? email, string phonenumber, string passwordHash, DateTime dateOfBirth, char gender,
+                    DateTime createdAt, DateTime updatedAt, int? createdBy, uint countryId, string? profilePicturePath, bool isDeleted ,string? notes)
         {
             PersonId = personID;
             SecondName = secondName;
             FirstName = firstName;
             Email = email;
-            PasswordHash = 
+            PasswordHash = passwordHash;
+            Notes = notes;
             PhoneNumber = phonenumber;
             DateOfBirth = dateOfBirth;
             Gender = gender;
@@ -39,7 +41,7 @@
     public class MemberDTO
     {
         public MemberDTO(uint personId, uint memberId, DateTime expiredAt, bool isBanned,
-            int memberShipStatusId,uint libraryId, string notes)
+            int memberShipStatusId,uint libraryId)
         {
             this.PersonId = personId;
             this.MemberId = memberId;
@@ -47,7 +49,6 @@
             this.IsBanned = isBanned;
             this.MemberShipStatusId = memberShipStatusId;
             this.LibraryId = libraryId;
-            this.Notes = notes;
         }
         public uint PersonId { private set; get; } = 0;
         public uint MemberId { private set; get; } = 0;
@@ -55,7 +56,6 @@
         public bool IsBanned { set; get; } = false;
         public int MemberShipStatusId { set; get; } = -1;
         public uint LibraryId { set; get; } = 0;
-        public string Notes { set; get; } = "";
     }
 
     // for the api 
@@ -63,7 +63,7 @@
 
     {
         public Profile(uint memberID , string firstName, string lastName, string email, string plainPassword, string phoneNumber, 
-                                 DateTime dateOfBirth, char gender, uint countryId, uint libraryId)
+                                 DateTime dateOfBirth, char gender, uint countryId, uint libraryId,string ? notes)
         {
             MemberId = memberID;
             FirstName = firstName;
@@ -75,6 +75,7 @@
             Gender = gender;
             CountryId = countryId;
             LibraryId = libraryId;
+            Notes = notes;
         }
         public uint MemberId { private set; get; }
         public string FirstName { get; set; } = "";
@@ -86,6 +87,9 @@
         public char Gender { get; set; }
         public uint CountryId { get; set; }
         public uint LibraryId { get; set; }
+
+        public string? Notes { set; get; } = "";
+
     }
     public class CountryDTO
     {
@@ -97,4 +101,31 @@
         public uint CountryId { get; }
         public string CountryName { get; }
     }
+
+    public class EmployeeDTO
+    {
+        public EmployeeDTO(uint personId, uint employeeId, uint managerId, uint libraryId, 
+                           DateTime hireDate, DateTime contractEndDate, bool isActive)
+        {
+            PersonId = personId;
+            EmployeeId = employeeId;
+            ManagerId = managerId;
+            LibraryId = libraryId;
+            HireDate = hireDate;
+            ContractEndDate = contractEndDate;
+            IsActive = isActive;
+            IsDeleted = false;
+        }
+
+        public uint PersonId { private set; get; } = 0;
+        public uint EmployeeId { private set; get; } = 0;
+        public uint ManagerId { private set; get; } = 0;
+        public uint LibraryId { private set; get; } = 0;
+        public DateTime HireDate { set; get; }
+        public DateTime ContractEndDate { set; get; }
+        public bool IsActive { get; set; }
+        public bool IsDeleted { get; set; }
+
+    }
+
 }

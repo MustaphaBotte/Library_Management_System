@@ -9,13 +9,14 @@ ALTER  PROCEDURE SP_InsertPerson
     @CountryID int,
     @ProfilePicturePath nvarchar(500) = NULL,
     @CreatedBy int =null,
+	@Notes nvarchar(500) = null,
 	@InsertedID int output
 AS
 BEGIN
 begin try
-   insert into People(FirstName,SecondName,Email,PhoneNumber,DateOfBirth,Gender,CreatedBy,CountryID,ProfilePicturePath,IsDeleted,PasswordHash)
+   insert into People(FirstName,SecondName,Email,PhoneNumber,DateOfBirth,Gender,CreatedBy,CountryID,ProfilePicturePath,IsDeleted,PasswordHash,Notes)
 
-   values(@FirstName, @SecondName, @Email,@PhoneNumber,@DateOfBirth, @Gender,@CreatedBy,@CountryID,@ProfilePicturePath,0,@PasswordHash);
+   values(@FirstName, @SecondName, @Email,@PhoneNumber,@DateOfBirth, @Gender,@CreatedBy,@CountryID,@ProfilePicturePath,0,@PasswordHash,@Notes);
 
    set @InsertedID = SCOPE_IDENTITY();
    return 0 ; --success

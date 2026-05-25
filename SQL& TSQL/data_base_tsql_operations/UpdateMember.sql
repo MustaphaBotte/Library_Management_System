@@ -1,6 +1,5 @@
 CREATE OR ALTER PROCEDURE SP_UpdateMember
     @MemberID           INT,  
-    @Notes              NVARCHAR(500),
     @ExpiredAt          DATETIME,
     @IsSuccess          BIT OUTPUT
 AS
@@ -15,7 +14,6 @@ BEGIN
 
         UPDATE Members
         SET         
-            Notes         = @Notes,
             ExpiredAt     = @ExpiredAt
         WHERE MemberID = @MemberID;
 

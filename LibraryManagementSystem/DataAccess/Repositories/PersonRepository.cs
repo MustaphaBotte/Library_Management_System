@@ -26,6 +26,7 @@ namespace LMS.DataAccess.Repositories
                 new SqlParameter("DateOfBirth", PersonDTO.@DateOfBirth),
                 new SqlParameter("Gender", PersonDTO.Gender),
                 new SqlParameter("CountryID", PersonDTO.CountryID),
+                new SqlParameter("Notes", PersonDTO.Notes),
                 new SqlParameter("ProfilePicturePath",string.IsNullOrEmpty(PersonDTO.ProfilePicturePath)? DBNull.Value : PersonDTO.ProfilePicturePath),
                 new SqlParameter("CreatedBy", PersonDTO.CreatedBy == -1 ? DBNull.Value : PersonDTO.CreatedBy),
                 output
@@ -63,7 +64,6 @@ namespace LMS.DataAccess.Repositories
                 new SqlParameter("firstname", PersonDTO.FirstName),
                 new SqlParameter("SecondName", PersonDTO.SecondName),
                 new SqlParameter("Email", PersonDTO.Email),
-                new SqlParameter("@PasswordHash", PersonDTO.PasswordHash),
                 new SqlParameter("PhoneNumber", PersonDTO.PhoneNumber),
                 new SqlParameter("DateOfBirth", PersonDTO.@DateOfBirth),
                 new SqlParameter("Gender", PersonDTO.Gender),
@@ -138,7 +138,7 @@ namespace LMS.DataAccess.Repositories
                               secondName: (string)Reader["SecondName"],
                               email: Reader["Email"] as string,
                               phonenumber: (string)Reader["PhoneNumber"],
-                              PasswordHash: (string)Reader["PasswordHash"],
+                              passwordHash : (string)Reader["PasswordHash"],
                               dateOfBirth: (DateTime)Reader["DateOfBirth"],
                               gender: ((string)Reader["Gender"])[0],
                               createdAt: (DateTime)Reader["CreatedAt"],
@@ -146,7 +146,8 @@ namespace LMS.DataAccess.Repositories
                               createdBy: Reader["CreatedBy"] as int?,
                               countryId: (uint)Reader["CountryID"],
                               profilePicturePath: Reader["ProfilePicturePath"] as string,
-                              isDeleted: (bool)Reader["IsDeleted"]
+                              isDeleted: (bool)Reader["IsDeleted"],
+                              notes : Reader["Notes"] ==DBNull.Value? null : (string)Reader["Notes"]
                               );
             }
 
@@ -186,7 +187,7 @@ namespace LMS.DataAccess.Repositories
                              secondName: (string)Reader["SecondName"],
                              email: Reader["Email"] as string,
                              phonenumber: (string)Reader["PhoneNumber"],
-                             PasswordHash: (string)Reader["PasswordHash"],
+                             passwordHash: (string)Reader["PasswordHash"],
                              dateOfBirth: (DateTime)Reader["DateOfBirth"],
                              gender: ((string)Reader["Gender"])[0],
                              createdAt: (DateTime)Reader["CreatedAt"],
@@ -194,7 +195,8 @@ namespace LMS.DataAccess.Repositories
                              createdBy: Reader["CreatedBy"] as int?,
                              countryId: (uint)Reader["CountryID"],
                              profilePicturePath: Reader["ProfilePicturePath"] as string,
-                             isDeleted: (bool)Reader["IsDeleted"]
+                             isDeleted: (bool)Reader["IsDeleted"],
+                             notes: Reader["Notes"] == DBNull.Value ? null : (string)Reader["Notes"]
                              ));
                 }
                 return PeopleList;

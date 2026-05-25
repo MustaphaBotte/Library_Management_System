@@ -10,7 +10,6 @@ CREATE TABLE Members
     IsBanned BIT NOT NULL DEFAULT 0,             
     MembershipStatusID int NOT NULL, -- e.g., 1=Pending, 2=Active, 3=Cancelled, 4=Expired
 	LibraryID int not null,
-	Notes nvarchar(500) null, 
 	IsDeleted bit not null default(0),
 	foreign key (PersonID) references People(PersonID),
     foreign key (LibraryID) references Library(LibraryID)

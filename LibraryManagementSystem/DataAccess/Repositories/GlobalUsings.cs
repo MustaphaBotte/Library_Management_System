@@ -1,7 +1,7 @@
 ﻿global using LMS.DataAccess.Config;
 global using LMS.DataAccess.Exceptions;
 global using LMS.DataAccess.Utils;
-global using LMS.DataAccess.Entities;
+global using LMS.DataAccess.DTOs;
 global using Microsoft.Data.SqlClient;
 global using System.Data;
 

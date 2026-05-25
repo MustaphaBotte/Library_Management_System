@@ -1,6 +1,4 @@
-﻿using LMS.DataAccess.DTOs;
-
-namespace LMS.DataAccess.Repositories
+﻿namespace LMS.DataAccess.Repositories
 {
     public class MemberRepository
     {
@@ -19,7 +17,6 @@ namespace LMS.DataAccess.Repositories
 
                   new SqlParameter("PersonID   ", MemberDTO.PersonId),
                   new SqlParameter("LibraryID", MemberDTO.LibraryId),
-                  new SqlParameter("Notes",DbUtils.IsNullOrDBNull(MemberDTO.Notes)?DBNull.Value:MemberDTO.Notes),
                   new SqlParameter("ExpiredAt", MemberDTO.ExpiredAt),                         
                   output};
 
@@ -52,7 +49,6 @@ namespace LMS.DataAccess.Repositories
 
                 SqlParameter[] parameters = new SqlParameter[] {
                 new SqlParameter("MemberID", (int)MemberDTO.MemberId),          
-                new SqlParameter("Notes", MemberDTO.Notes),
                 new SqlParameter("ExpiredAt", MemberDTO.ExpiredAt),
                 output};
                 command.Parameters.AddRange(parameters);
@@ -119,8 +115,7 @@ namespace LMS.DataAccess.Repositories
                     (DateTime)Reader["ExpiredAt"],
                     (bool)Reader["IsBanned"],
                     (int)Reader["MembershipStatusID"],
-                    (uint)Reader["LibraryID"],
-                    Reader["Notes"] == DBNull.Value ? "": (string)Reader["Notes"]
+                    (uint)Reader["LibraryID"]
                 );
             }
             catch (SqlException e)

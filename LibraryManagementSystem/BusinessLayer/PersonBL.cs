@@ -11,8 +11,8 @@
             }
 
         }
-        private enum EnMode {Add=1 , Update = 2 }
-        EnMode _Mode = EnMode.Add ;
+        protected enum EnMode {Add=1 , Update = 2 }
+        protected EnMode _Mode = EnMode.Add ;
 
         public uint PersonId { get; private set; } = 0;
         
@@ -118,6 +118,9 @@
         public CountryDTO? Country = null;      
         public bool IsDeleted { set; get; } = false;
 
+
+        public string? Notes { set; get; } = "";
+       
         public Person(Profile dto)
         {
           
@@ -129,6 +132,7 @@
             DateOfBirth = dto.DateOfBirth;
             Gender = dto.Gender;
             CountryID = dto.CountryId;
+            Notes = dto.Notes;
             this._Mode = EnMode.Add;
         }  
         private Person(PersonDTO dto)
@@ -150,7 +154,7 @@
         }
 
         private PersonDTO personDTO => new PersonDTO(PersonId,FirstName, SecondName, Email,
-                                                 PhoneNumber,_passwordHash, DateOfBirth, Gender, CreatedAt, UpdatedAt, CreatedBy,CountryID,ProfilePicturePath, IsDeleted);
+                                   PhoneNumber,_passwordHash, DateOfBirth, Gender, CreatedAt, UpdatedAt, CreatedBy,CountryID,ProfilePicturePath, IsDeleted,Notes);
         
         
         public static async Task<PersonDTO?> GetPersonAsync(uint PersonID)
