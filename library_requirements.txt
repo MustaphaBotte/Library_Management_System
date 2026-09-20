@@ -1,0 +1,2 @@
+https://www.geeksforgeeks.org/system-design/system-design-for-library-management/
+https://www.academia.edu/35100170/Software_Requirements_Specification_LIBRARY_MANAGEMENT_SYSTEM_Slot_C1_Library_Management_System_SRS_Document
