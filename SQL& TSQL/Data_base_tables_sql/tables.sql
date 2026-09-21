@@ -264,3 +264,47 @@ CREATE TABLE Borrows
 CREATE UNIQUE NONCLUSTERED INDEX UQ_Borrows_ActiveCopy 
 ON Borrows(BookCopyID) 
 WHERE ActualReturnDate IS NULL;
+
+
+
+
+
+CREATE TABLE Fees(
+    FeeID int primary key identity,
+
+	--denormalization
+    MemberID int  not null,    
+    BorrowID int  not null, 
+    Amount decimal(10,2) not null,  
+    FeeType varchar(20) not null,
+    Status varchar(15) not null default 'Unpaid',
+    
+    CreatedAt datetime2 not null default GETDATE(),  
+    ResolvedAt datetime2 null, 
+
+
+	CONSTRAINT FK_Fees_Mermbers
+        FOREIGN KEY (MemberID)
+        REFERENCES Members(MemberID),
+
+    CONSTRAINT FK_Fees_Borrows
+        FOREIGN KEY (BorrowID)
+        REFERENCES Borrows(BorrowID),
+
+    CONSTRAINT CK_Fees_Amount CHECK (Amount > 0),
+    
+    CONSTRAINT CK_Fees_Type CHECK (FeeType IN ('Rental', 'LateFee', 'Damage')),
+    
+    CONSTRAINT CK_Fees_Status CHECK (Status IN ('Unpaid', 'Paid', 'Waived')),
+    
+    CONSTRAINT CK_Fees_Resolution 
+    CHECK (
+        (Status = 'Unpaid' AND ResolvedAt IS NULL) OR 
+        (Status IN ('Paid', 'Waived') AND ResolvedAt IS NOT NULL)
+    )
+);
+CREATE NONCLUSTERED INDEX IDX_Fees_MemberID ON Fees(MemberID);
+CREATE NONCLUSTERED INDEX IDX_Fees_BorrowID ON Fees(BorrowID);
+CREATE NONCLUSTERED INDEX IDX_Fees_ActiveDebts ON Fees(MemberID) WHERE Status = 'Unpaid';
+
+
