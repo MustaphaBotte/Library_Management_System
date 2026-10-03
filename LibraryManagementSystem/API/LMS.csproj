@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Authorization\**" />
+    <Compile Remove="BusinesLayer\**" />
+    <Compile Remove="BusinessLayer\**" />
+    <Compile Remove="DataAccess\**" />
+    <Compile Remove="DA\**" />
+    <Compile Remove="DTOs\**" />
+    <Compile Remove="DTO\**" />
+    <Compile Remove="Models\**" />
+    <Compile Remove="Model\**" />
+    <Content Remove="Authorization\**" />
+    <Content Remove="BusinesLayer\**" />
+    <Content Remove="BusinessLayer\**" />
+    <Content Remove="DataAccess\**" />
+    <Content Remove="DA\**" />
+    <Content Remove="DTOs\**" />
+    <Content Remove="DTO\**" />
+    <Content Remove="Models\**" />
+    <Content Remove="Model\**" />
+    <EmbeddedResource Remove="Authorization\**" />
+    <EmbeddedResource Remove="BusinesLayer\**" />
+    <EmbeddedResource Remove="BusinessLayer\**" />
+    <EmbeddedResource Remove="DataAccess\**" />
+    <EmbeddedResource Remove="DA\**" />
+    <EmbeddedResource Remove="DTOs\**" />
+    <EmbeddedResource Remove="DTO\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="Model\**" />
+    <None Remove="Authorization\**" />
+    <None Remove="BusinesLayer\**" />
+    <None Remove="BusinessLayer\**" />
+    <None Remove="DataAccess\**" />
+    <None Remove="DA\**" />
+    <None Remove="DTOs\**" />
+    <None Remove="DTO\**" />
+    <None Remove="Models\**" />
+    <None Remove="Model\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
+</Project>
